@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\productosModel;
 
 class ProductoController extends Controller
 {
@@ -12,6 +13,8 @@ class ProductoController extends Controller
     public function index()
     {
         //
+        $data['productos'] = productosModel::all();
+        return view('produ.index', $data);
     }
 
     /**
@@ -20,6 +23,7 @@ class ProductoController extends Controller
     public function create()
     {
         //
+        return view('produ.create');
     }
 
     /**
@@ -27,7 +31,10 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //recepcionar todos los datos
+        $produData = request()->except("_token");
+        Produ::insert($produData);
+        return redirect()->route('produ.index');
     }
 
     /**
@@ -43,7 +50,9 @@ class ProductoController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        //recuperar los datos
+        $produ=Produ::findOrFail($id);
+        return view('produ.edit', compact('produ'));
     }
 
     /**
@@ -52,6 +61,9 @@ class ProductoController extends Controller
     public function update(Request $request, string $id)
     {
         //
+        $produData=request()->except(['_token', '_method']);
+        Produ::where('id', '=', $id)->update($produData);
+        return redirect('produ');
     }
 
     /**
@@ -60,5 +72,7 @@ class ProductoController extends Controller
     public function destroy(string $id)
     {
         //
+        Produ::destroy($id);
+        return redirect('produ');
     }
 }
